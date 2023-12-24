@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayBull Api Örnek Kodlar</title>
+    <link rel="icon"
+          type="image/png"
+          href="img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+
+    <style>
+        code{
+            word-wrap: break-word;
+            border:2px solid white;
+            padding:0px !important;
+            padding-left: 20px !important;
+            }
+    </style>
+
+</head>
+<body>
+    <div style="text-align:center; margin:20px; margin-bottom:10px;">
+        <a href="#"><img src="img/paybull-logo.png" alt="paybull-logo" width="200px" height="auto"></a>
+    </div>
+
+    <h2  style="text-align:center; margin-bottom:20px;">
+        Hızlı Başlangıç Dökümanı
+    </h2>
+
+
+    <div class="accordion" id="accordionPaybull">
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading1">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; Başlangıç
+            </button>
+          </h2>
+          <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1" data-bs-parent="#accordionPaybull">
+            <div class="accordion-body">
+
+<h5> 1 - Sayfanızın en üstüne <mark>Paybull.php</mark> dosyasını ekleyin.</h5>
+
+<pre><code class="language-php">
+include "Paybull.php";
+
+</code></pre>
+
+<h5> 2 - PayBull sınıfını çağırın.</h5>
+<pre><code class="language-php">
+$paybull = new Paybull();
+    
+</code></pre>
+
+<h5> 3 - PayBull tarafından verilen api bilgilerini girin.</h5>
+<pre><code class="language-php">
+  $this->setBaseUrl('https://test.paybull.com/ccpayment');
+        $this->setAppId('c3d81ae3cc3011ef10dcefa31a458d65');
+        $this->setAppSecret('217071ea9f3f2e9b695d8f0039024e64');
+        $this->setMerchantKey('$2y$10$w/ODdbTmfubcbUCUq/ia3OoJFMUmkM1UVNBiIQIuLfUlPmaLUT1he');
+        $this->setMerchantId('98950');
+
+// Test ortamında "Test Kartı" ile kullanımda sadece aşağıdaki kodu kullanabilirsiniz.
+// Merchant ID: "98950"
+$paybull->setTestMerchantWithTestCard();
+
+// Test ortamında "Gerçek Kart" ile kullanımda sadece aşağıdaki kodu kullanabilirsiniz.
+// Merchant ID: "98950"
+$paybull->setTestMerchantWithRealCard();
+    
+</code></pre>
+
+            </div>
+          </div>
+        </div>
+
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading2">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; Token Alma
+              </button>
+            </h2>
+            <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#accordionPaybull">
+              <div class="accordion-body">
+   
+<div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>
+
+<h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->post("/api/token")
+    ->addHeader('Accept', 'application/json')
+    ->addHeader('Content-Type', 'application/json')
+    ->addParameter("app_id", $paybull->getAppId())
+    ->addParameter("app_secret", $paybull->getAppSecret())
+    ->execute();    
+
+</code></pre>
+
+<h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->getToken();
+
+</code></pre>
+
+<h5> 3 - Çıktı</h5>
+
+<pre><code class="language-php">
+{
+    "http_code":200,
+    "errno":0,
+    "errmsg":"",
+    "response":{
+        "status_code":100,
+        "status_description":"Successfully Generated token",
+        "data":{
+            "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiZGMyYTM3YmE0MzM0NjBmYTRiY2Q5ZWQ5ZWZmZTg3YTAyMDYxZWU3M2VkMWMyN2ZkNThjNzVmZjdmNGY4NThkNGEzZTE0NDhlZDhiMjFkODMiLCJpYXQiOiIxNjI0MTk1NDgzLjYyNTM1MCIsIm5iZiI6IjE2MjQxOTU0ODMuNjI1MzczIiwiZXhwIjoiMTYyNDIwMjY4My41NDM5NzEiLCJzdWIiOiI5MyIsInNjb3BlcyI6W119.fMi0BNtZL62_pjylxBjmXjZteClz7AtrBFzg_hmYbUTg-xd-X_ykJ2IZz4fxtaHmAXxbTgp35xrwhQ3Xo1UpjzWqc60KGQugNZ2AaZagCCegqnkp5N9OueFDOeBbqBkhPOP1J24JlJYOYHz70YCyKDV-yZesd78CelGrgyJcGdshzbDKXWGovDEQdiE7TnH4-Hd4dXYh0FInxsqmYp6r72a6-LTQEfz_aiGzet9-7OdUUbZkTjKk0havmiFv0r_VKhlTxWQoy80_CFDBjNN2B7znS9pK-IK7Tl91YjpU6e1HKFq7V8zsOGKOTICQg3R-g99ZF1YzlJZmSsr83FoN9maL8Is11ZT-QIKlvxe6iIRhQMOsRD3VXEbnG8t9qecTvU5UBjk_In6w6P8JNE0FNth7QYMyAcEB_VtKNXUmxOXWL41Xc65-5ER4SURgwTWcCtfFKCFvi3Eb9ImIEAaRppnqLCRzJBIfjShUW6sV9eAJHmGI78wp9R32rS0j7T72ESGZ2azuna7Gt9n7h-xaZuTdtGJRvu6SNc4hClLMH6FeWVfLQnZHoewvKIRDjQIIebUwTeOzi3Qm2u5pYCbp-xAtnVdQg4gCL_2loWxylXeEwIBWwc8KzWPhhaI5TFbB8W2QM0pW34GNuDCpirxXkm-VuusXCamzDovadyrcyg8",
+            "is_3d":1,
+            "expires_at":"2021-06-20 18:24:43"
+        }
+    }
+}  
+
+</code></pre>
+
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading3">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; Taksit Bilgisi Alma
+              </button>
+            </h2>
+            <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#accordionPaybull">
+              <div class="accordion-body">
+
+
+<div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>                
+<h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->getToken();
+
+$is_2d = 0;
+if($requestToken->response->data->is_3d == 0){
+    $is_2d = 1;
+}   
+
+$requestGetPos = $paybull->post("/api/getpos")
+    ->addHeader('Authorization', 'Bearer '. $requestToken->response->data->token)
+    ->addParameter('credit_card', '534261') // Bin Number
+    ->addParameter('amount', '1')
+    ->addParameter('currency_code', 'TRY')
+    ->addParameter('merchant_key', $paybull->getMerchantKey())
+    ->addParameter('is_2d', $is_2d)
+    ->execute();
+    
+</code></pre>
+
+<h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestGetPos = $paybull
+    ->addParameter('credit_card', '534261') // Bin number
+    ->addParameter('amount', '1')
+    ->addParameter('currency_code', 'TRY')
+    ->getPos(); 
+
+</code></pre>
+
+<h5> 3 - Çıktı</h5>
+
+<pre><code class="language-php">
+{
+    "http_code":200,
+    "errno":0,
+    "errmsg":"",
+    "response":{
+        "status_code":100,
+        "status_description":"Successfull",
+        "data":[
+            {
+                "pos_id":67,
+                "campaign_id":0,
+                "allocation_id":0,
+                "installments_number":1,
+                "card_type":"CREDIT CARD",
+                "card_program":"Bonus",
+                "payable_amount":1,
+                "hash_key":"9c34c6cb51754678:19a7:pe6+ty__RE447unqrFgCec5Dm8yxV4jDTleg__e23H4U5iW4YaDVwNMzJ4KgkvuKWvB552yK42A2Arew8i2ZQ1wLZxyOQcO8XE9SfndPMnyBE=",
+                "amount_to_be_paid":"1.00",
+                "currency_code":"TRY",
+                "currency_id":1,
+                "title":"Single payment"
+            }
+        ]
+    }
+} 
+
+</code></pre>
+
+              </div>
+            </div>
+          </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading9">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9" aria-expanded="false" aria-controls="collapse9">
+                    <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; 3D Ödeme
+                </button>
+            </h2>
+            <div id="collapse9" class="accordion-collapse collapse" aria-labelledby="heading9" data-bs-parent="#accordionPaybull">
+                <div class="accordion-body">
+                    <div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>
+                    <h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+                    <pre><code class="language-php">
+/*
+*   - Bu api endpointi başarılı olduğunda cevap olarak html form çıktısı döndürür, bu çıktının dolu gelip gelmediğini kontrol etmelisiniz, dolu ise ekrana basmalısınız.
+*   - "return_url" başarılı olduğunda yönleneceği, internetten ulaşılabilir bir adres olmalıdır.
+*   - "cancel_url" başarılı olmayan her durumda burada tanımladığınız url adresine yönlenecektir.
+*/
+
+$total = 2.00;
+$invoiceId = time() . rand(1000,9999);
+$hash = $paybull->generateHashKey($total,1,'TRY',$paybull->getMerchantKey(),$invoiceId, $paybull->getAppSecret());
+$items = [["name" => "Item 1","price" => 2.00,"qnantity" => 1,"description" =>"Item 1 Description"]];
+
+$requestToken = $paybull->getToken();
+
+$requestPaySmart3D = $paybull
+    ->post("/api/paySmart3D")
+    ->addHeader('Authorization', 'Bearer '. $requestToken->response->data->token)
+    ->addParameter('cc_holder_name', 'John Dao')
+    ->addParameter('cc_no', '4508034508034509')
+    ->addParameter('expiry_month', '12')
+    ->addParameter('expiry_year', '2026')
+    ->addParameter('cvv', '000')
+    ->addParameter('currency_code', 'TRY')
+    ->addParameter('installments_number', 1)
+    ->addParameter('total', $total)
+    ->addParameter('invoice_id', $invoiceId)
+    ->addParameter('invoice_description', 'INVOICE TEST DESCRIPTION')
+    ->addParameter('merchant_key', $paybull->getMerchantKey())
+    ->addParameter('name', 'John')
+    ->addParameter('surname', 'Dao')
+    ->addParameter('hash_key', $hash)
+    ->addParameter('items', json_encode($items))
+    ->addParameter('return_url', "https://www.google.com")
+    ->addParameter('cancel_url', "https://www.google.com")
+    ->execute();
+
+if($requestPaySmart3D->http_code != 200){
+    echo json_encode($requestPaySmart3D);
+    exit;
+}
+
+echo $requestPaySmart3D->htmlBody;
+exit;
+
+</code></pre>
+
+                    <h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+                    <pre><code class="language-php">
+$requestPaySmart3D = $paybull
+    ->addParameter('cc_holder_name', 'John Dao')
+    ->addParameter('cc_no', '4508034508034509')
+    ->addParameter('expiry_month', '12')
+    ->addParameter('expiry_year', '2026')
+    ->addParameter('cvv', '000')
+    ->addParameter('currency_code', 'TRY')
+    ->addParameter('installments_number', 1)
+    ->addParameter('total', $total)
+    ->addParameter('invoice_id', $invoiceId)
+    ->addParameter('invoice_description', 'INVOICE TEST DESCRIPTION')
+    ->addParameter('name', 'John')
+    ->addParameter('surname', 'Dao')
+    ->addParameter('items', json_encode($items))
+    ->addParameter('return_url', "https://www.google.com")
+    ->addParameter('cancel_url', "https://www.google.com")
+    ->paySmart3D();
+
+if($requestPaySmart3D->http_code != 200){
+    echo json_encode($requestPaySmart3D);
+    exit;
+}
+
+echo $requestPaySmart3D->htmlBody;
+exit;
+
+</code></pre>
+
+
+                    <h5> 3 - <mark>Default</mark> değerler ile hızlı kullanım örneği.</h5>
+
+                    <pre><code class="language-php">
+$requestPaySmart3D = $paybull->paySmart3DTest();
+
+if($requestPaySmart3D->http_code != 200){
+    echo json_encode($requestPaySmart3D);
+    exit;
+}
+
+echo $requestPaySmart3D->htmlBody;
+exit;
+
+</code></pre>
+
+
+                    <h5> 4 - Çıktı</h5>
+
+                    <pre><code class="language-php">
+// Çıktı html form olacaktır.
+
+</code></pre>
+
+
+                </div>
+            </div>
+        </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading4">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; Üye İşyeri Komisyon API
+              </button>
+            </h2>
+            <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordionPaybull">
+              <div class="accordion-body">
+<div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>                
+<h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->getToken();
+
+$requestCommissions = $paybull->post("/api/commissions")
+    ->addHeader('Authorization', 'Bearer '. $requestToken->response->data->token)
+    ->addParameter('currency_code', 'TRY')
+    ->execute();
+    
+</code></pre>
+
+<h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestCommissions = $paybull
+    ->addParameter('currency_code', 'TRY')
+    ->getCommissions();
+
+</code></pre>
+
+<h5> 3 - Çıktı</h5>
+
+<pre><code class="language-php">
+{
+    "http_code":200,
+    "errno":0,
+    "errmsg":"",
+    "response":{
+        "status_code":100,
+        "status_description":"successful",
+        "data":{
+            "1":[
+                {
+                "card_program":"Maximum",
+                "merchant_commission_percentage":"1.0000",
+                "merchant_commission_fixed":"0.0000",
+                "user_commission_percentage":0,
+                "user_commission_fixed":0,
+                "currency_code":"TRY",
+                "installment":1
+                }
+            ]
+        }
+    }
+} 
+
+</code></pre>                
+
+
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading5">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; İşlem Durumu
+              </button>
+            </h2>
+            <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#accordionPaybull">
+              <div class="accordion-body">
+<div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>                
+<h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->getToken();
+
+$requestCheckStatus = $paybull->post("/api/checkstatus")
+    ->addHeader('Authorization', 'Bearer '. $requestToken->response->data->token)
+    ->addParameter('merchant_key', $paybull->getMerchantKey())
+    ->addParameter('invoice_id', 'PF210605170428S89350')
+    ->addParameter('include_pending_status', true)
+    ->execute();
+    
+</code></pre>
+
+<h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestCheckStatus = $paybull
+    ->addParameter('invoice_id', 'PF210605170428S89350')
+    ->addParameter('include_pending_status', true)
+    ->getCheckStatus();
+
+</code></pre>
+
+<h5> 3 - Çıktı</h5>
+
+<pre><code class="language-php">
+{
+    "http_code":200,
+    "errno":0,
+    "errmsg":"",
+    "response":{
+        "status_code":100,
+        "status_description":"An order has been taken place for this invoice id: PF210605170428S89350",
+        "transaction_status":"Completed",
+        "order_id":"162290187020384",
+        "transaction_id":"DiV0c-oUjb-TC10-18309-050621",
+        "message":"An order has been taken place for this invoice id: PF210605170428S89350",
+        "reason":"",
+        "bank_status_code":"",
+        "bank_status_description":"",
+        "invoice_id":"PF210605170428S89350",
+        "total_refunded_amount":0,
+        "product_price":"14.00",
+        "transaction_amount":14,
+        "ref_number":""
+    }
+}
+
+</code></pre>                
+
+
+              </div>
+            </div>
+          </div>          
+
+
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading6">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; İşlem İadesi
+              </button>
+            </h2>
+            <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#accordionPaybull">
+              <div class="accordion-body">
+<div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>                
+<h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->getToken();
+
+$requestRefund = $paybull->post("/api/refund")
+    ->addHeader('Authorization', 'Bearer '. $requestToken->response->data->token)
+    ->addParameter('merchant_key', $paybull->getMerchantKey())
+    ->addParameter('invoice_id', 'PF210605170428S89350')
+    ->addParameter('amount', 1)
+    ->execute();
+    
+</code></pre>
+
+<h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestRefund = $paybull
+    ->addParameter('invoice_id', 'PF210605170428S89350')
+    ->addParameter('amount', 1)
+    ->refund();
+
+</code></pre>
+
+<h5> 3 - Çıktı</h5>
+
+<pre><code class="language-php">
+{
+    "http_code":200,
+    "errno":0,
+    "errmsg":"",
+    "response":{
+        "status_code":100,
+        "status_description":"Refund completed successfully",
+        "order_no":"162290187020384",
+        "invoice_id":"PF210605170428S89350",
+        "ref_no":"117200025040"
+    }
+}
+
+</code></pre>                
+
+
+              </div>
+            </div>
+          </div>           
+          
+        
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading7">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+                <i class="bi bi-arrow-right-circle-fill"></i> &nbsp; Üye İşyeri Aktif Taksitleri
+              </button>
+            </h2>
+            <div id="collapse7" class="accordion-collapse collapse" aria-labelledby="heading7" data-bs-parent="#accordionPaybull">
+              <div class="accordion-body">
+<div class="alert alert-warning"> Not: Başlangıç bölümündeki ayarları yaptığınızdan emin olun! </div>                
+<h5> 1 - <mark>Detaylı</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestToken = $paybull->getToken();
+
+$requestInstallments = $paybull->post("/api/installments")
+    ->addHeader('Authorization', 'Bearer '. $requestToken->response->data->token)
+    ->addParameter('merchant_key', $paybull->getMerchantKey())
+    ->execute();
+    
+</code></pre>
+
+<h5> 2 - <mark>Kısa</mark> kullanım örneği.</h5>
+
+<pre><code class="language-php">
+$requestInstallments = $paybull->installments();
+
+</code></pre>
+
+<h5> 3 - Çıktı</h5>
+
+<pre><code class="language-php">
+{
+    "http_code":200,
+    "errno":0,
+    "errmsg":"",
+    "response":{
+        "status_code":100,
+        "message":"Merchant Active Installment",
+        "installments":[
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+        ]
+    }
+}
+
+</code></pre>                
+
+
+              </div>
+            </div>
+          </div>           
+          
+        
+
+
+
+          
+        
+
+
+      </div>
+      </div>
+
+
+
+      <script>hljs.highlightAll();</script>
+</body>
+</html>
